@@ -1,0 +1,22 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 10.00
+# Visual C# Express 2008
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Song of Ice", "Ice\Song of Ice.csproj", "{EC301F81-5CBA-4610-96E5-DE3E313E6720}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x86 = Debug|x86
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{EC301F81-5CBA-4610-96E5-DE3E313E6720}.Debug|x86.ActiveCfg = Debug|x86
+		{EC301F81-5CBA-4610-96E5-DE3E313E6720}.Debug|x86.Build.0 = Debug|x86
+		{EC301F81-5CBA-4610-96E5-DE3E313E6720}.Release|x86.ActiveCfg = Release|x86
+		{EC301F81-5CBA-4610-96E5-DE3E313E6720}.Release|x86.Build.0 = Release|x86
+		{63DE6665-950B-445E-83FD-9B831C6A1BBB}.Debug|x86.ActiveCfg = Debug|x86
+		{63DE6665-950B-445E-83FD-9B831C6A1BBB}.Release|x86.ActiveCfg = Release|x86
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

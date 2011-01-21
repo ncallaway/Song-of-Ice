@@ -1,0 +1,82 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<XnaContent xmlns:Pipeline="Microsoft.Xna.Framework.Content.Pipeline">
+  <Asset Type="Pipeline:BuildItemCollection">
+    <Item>
+      <Source>effects.fx</Source>
+      <Name>effects</Name>
+      <Importer>EffectImporter</Importer>
+      <Processor>EffectProcessor</Processor>
+      <Options>None</Options>
+      <Output>C:\particle\dev\Sands\WindowsGame1\bin\x86\Release\Content\effects.xnb</Output>
+      <Time>2011-01-18T18:36:45.5920249-08:00</Time>
+    </Item>
+    <Item>
+      <Source>Snowscape_stub.jpg</Source>
+      <Name>Snowscape_stub</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+      <Options>None</Options>
+      <Output>C:\particle\dev\Sands\WindowsGame1\bin\x86\Release\Content\Snowscape_stub.xnb</Output>
+      <Time>2011-01-18T17:16:08.8093768-08:00</Time>
+    </Item>
+    <Item>
+      <Source>Star9.png</Source>
+      <Name>Star9</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+      <Options>None</Options>
+      <Output>C:\particle\dev\Sands\WindowsGame1\bin\x86\Release\Content\Star9.xnb</Output>
+      <Time>2010-11-07T01:22:13.1445969-07:00</Time>
+    </Item>
+    <Item>
+      <Source>First Breath After Coma.mp3</Source>
+      <Name>First-Breath-After-Coma</Name>
+      <Importer>Mp3Importer</Importer>
+      <Processor>SongProcessor</Processor>
+      <Options>None</Options>
+      <Output>C:\particle\dev\Sands\WindowsGame1\bin\x86\Release\Content\First-Breath-After-Coma.xnb</Output>
+      <Extra>C:\particle\dev\Sands\WindowsGame1\bin\x86\Release\Content\First-Breath-After-Coma.wma</Extra>
+      <Time>2011-01-18T17:23:05.3041989-08:00</Time>
+    </Item>
+    <BuildSuccessful>true</BuildSuccessful>
+    <Settings>
+      <TargetPlatform>Windows</TargetPlatform>
+      <BuildConfiguration>Release</BuildConfiguration>
+      <CompressContent>true</CompressContent>
+      <RootDirectory>C:\particle\dev\Sands\WindowsGame1\Content\</RootDirectory>
+      <LoggerRootDirectory>C:\particle\dev\Sands\WindowsGame1\</LoggerRootDirectory>
+      <IntermediateDirectory>C:\particle\dev\Sands\WindowsGame1\Content\obj\x86\Release\</IntermediateDirectory>
+      <OutputDirectory>C:\particle\dev\Sands\WindowsGame1\bin\x86\Release\Content\</OutputDirectory>
+    </Settings>
+    <Assemblies>
+      <Assembly>
+        <Key>C:\Program Files (x86)\Microsoft XNA\XNA Game Studio\v3.1\References\Windows\x86\Microsoft.Xna.Framework.Content.Pipeline.XImporter.dll</Key>
+        <Value>2009-05-28T00:16:14-07:00</Value>
+      </Assembly>
+      <Assembly>
+        <Key>C:\Program Files (x86)\Microsoft XNA\XNA Game Studio\v3.1\References\Windows\x86\Microsoft.Xna.Framework.Content.Pipeline.VideoImporters.dll</Key>
+        <Value>2009-05-28T00:16:06-07:00</Value>
+      </Assembly>
+      <Assembly>
+        <Key>C:\Program Files (x86)\Microsoft XNA\XNA Game Studio\v3.1\References\Windows\x86\Microsoft.Xna.Framework.Content.Pipeline.TextureImporter.dll</Key>
+        <Value>2009-05-28T00:16:16-07:00</Value>
+      </Assembly>
+      <Assembly>
+        <Key>C:\Program Files (x86)\Microsoft XNA\XNA Game Studio\v3.1\References\Windows\x86\Microsoft.Xna.Framework.Content.Pipeline.FBXImporter.dll</Key>
+        <Value>2009-05-28T00:16:26-07:00</Value>
+      </Assembly>
+      <Assembly>
+        <Key>C:\Program Files (x86)\Microsoft XNA\XNA Game Studio\v3.1\References\Windows\x86\Microsoft.Xna.Framework.Content.Pipeline.EffectImporter.dll</Key>
+        <Value>2009-05-28T00:16:12-07:00</Value>
+      </Assembly>
+      <Assembly>
+        <Key>C:\Program Files (x86)\Microsoft XNA\XNA Game Studio\v3.1\References\Windows\x86\Microsoft.Xna.Framework.Content.Pipeline.AudioImporters.dll</Key>
+        <Value>2009-05-28T00:16:06-07:00</Value>
+      </Assembly>
+      <Assembly>
+        <Key>C:\Windows\assembly\GAC_32\Microsoft.Xna.Framework.Content.Pipeline\3.1.0.0__6d5c3888ef60e27d\Microsoft.Xna.Framework.Content.Pipeline.dll</Key>
+        <Value>2010-09-04T02:07:20.7429303-07:00</Value>
+      </Assembly>
+    </Assemblies>
+  </Asset>
+</XnaContent>
