@@ -29,10 +29,12 @@ namespace Sands
         private Color selected;
         private Color unselected;
 
-        private KeyboardState previousState;
+        private KeyboardState previousKeyboardState;
+        private MouseState previousMouseState;
 
 
         private List<MetaLevel> metas;
+        private List<Texture2D> metaResources;
 
         public Menu(SandsGame game) : base(game)
         {
@@ -61,7 +63,7 @@ namespace Sands
             KeyboardState currentState = Keyboard.GetState();
 
             if (currentState.IsKeyDown(Keys.Down)) {
-                if (previousState == null || previousState.IsKeyUp(Keys.Down)) {
+                if (previousKeyboardState == null || previousKeyboardState.IsKeyUp(Keys.Down)) {
                     // MOVE DOWN
                     menuSelector++;
                     if (menuSelector > metas.Count || metas[menuSelector - 1].State == LevelState.LOCKED) {
@@ -72,7 +74,7 @@ namespace Sands
             }
 
             if (currentState.IsKeyDown(Keys.Up)) {
-                if (previousState == null || previousState.IsKeyUp(Keys.Up)) {
+                if (previousKeyboardState != null && previousKeyboardState.IsKeyUp(Keys.Up)) {
                     // MOVE UP
                     menuSelector--;
                     if (menuSelector < 0 || (menuSelector > 0 && metas[menuSelector - 1].State == LevelState.LOCKED)) {
@@ -82,11 +84,77 @@ namespace Sands
                 }
             }
 
-            previousState = currentState;
+            if (currentState.IsKeyDown(Keys.Enter)) {
+                if (previousKeyboardState != null && previousKeyboardState.IsKeyUp(Keys.Enter)) {
+                    int index = menuSelector;
+                    if (index > 0) {
+                        index--;
+                    }
+
+                    game.SwitchToLevel(metas[index]);
+                }
+            }
+
+            previousKeyboardState = currentState;
         }
 
         private void HandleMouse()
         {
+            MouseState currentState = Mouse.GetState();
+
+            bool click = false;
+
+            if (currentState.LeftButton == ButtonState.Released) {
+                if (previousMouseState != null && previousMouseState.LeftButton == ButtonState.Pressed) {
+                    click = true;
+                }
+            }
+
+            if (isOverNewGame(currentState)) {
+                menuSelector = 0;
+            }
+
+            int i = 0;
+            foreach (MetaLevel ml in metas) {
+                if (ml.State != LevelState.LOCKED) {
+                    String text = (ml.State == LevelState.UNKNOWN) ? "???" : ml.Title;
+                    Vector2 measurement = font24.MeasureString(text);
+                    if (isOverMenuItem(currentState, (int)measurement.X, i)) {
+                        menuSelector = i + 1;
+                    }
+                }
+                i++;
+            }
+
+            if (click) {
+                int index = menuSelector;
+                if (index > 0) {
+                    index--;
+                }
+                game.SwitchToLevel(metas[index]);
+            }
+
+            previousMouseState = currentState;
+        }
+
+        private bool isOverNewGame(MouseState state)
+        {
+            if (state.X > 65 && state.X < 200) {
+                if (state.Y > 115 && state.Y < 145) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        private bool isOverMenuItem(MouseState state, int labelWidth, int index)
+        {
+            if (state.X > 90 && state.X < 195 + labelWidth) {
+                if (state.Y > 175 + index * 52 && state.Y < 225 + index * 52) {
+                    return true;
+                }
+            }
+            return false;
         }
 
         public override void Draw(GameTime gameTime)
@@ -130,7 +198,7 @@ namespace Sands
                 Texture2D resource;
                 if (ml.State == LevelState.KNOWN) {
                     title = ml.Title;
-                    resource = questionMark;
+                    resource = metaResources[i];
                 } else if (ml.State == LevelState.UNKNOWN) {
                     title = "???";
                     resource = questionMark;
@@ -142,10 +210,10 @@ namespace Sands
                 Rectangle whiteDest = new Rectangle(100, 180 + i * 52, 54, 42);
                 Rectangle resourceDest = new Rectangle(102, 182 + i * 52, 50, 38);
 
-                batch.Draw(white, whiteDest, Color.White);
-                batch.Draw(resource, resourceDest, Color.White);
-
                 tmpColor = (menuSelector == i+1) ? selected : unselected;
+
+                batch.Draw(white, whiteDest, tmpColor);
+                batch.Draw(resource, resourceDest, Color.White);
                 batch.DrawString(font24, title, new Vector2(165, 178 + i * 52), tmpColor);
 
                 if (menuSelector == i + 1) {
@@ -159,6 +227,7 @@ namespace Sands
         public override void Load()
         {
             metas = game.GetMetaLevels();
+            metaResources = new List<Texture2D>();
 
             batch = new SpriteBatch(game.GraphicsDevice);
             font36 = content.Load<SpriteFont>("Font36");
@@ -168,6 +237,11 @@ namespace Sands
             questionMark = content.Load<Texture2D>("questionMark");
             white = content.Load<Texture2D>("white");
             arrow = content.Load<Texture2D>("arrow");
+
+            foreach (MetaLevel ml in metas) {
+                Texture2D resource = content.Load<Texture2D>(ml.ThumbnailResource);
+                metaResources.Add(resource);
+            }
 
             snowHelper.Load(content);
             if (sound)
@@ -186,6 +260,11 @@ namespace Sands
             questionMark.Dispose();
             white.Dispose();
             arrow.Dispose();
+
+            foreach (Texture2D tex in metaResources) {
+                tex.Dispose();
+            }
+            metaResources.Clear();
 
             snowHelper.Stop();
             snowHelper.Unload(content);

@@ -20,6 +20,16 @@ namespace Sands
 {
     public delegate void MetaLevelsUpdated();
 
+    public enum GameState
+    {
+        MENU,
+        MENU_TRANSITION,
+        LEVEL,
+        LEVEL_PAUSED,
+        LEVEL_TRANSITION,
+ 
+    }
+
     /// <summary>
     /// This is the main type for your game
     /// </summary>
@@ -27,12 +37,18 @@ namespace Sands
     {
         public const bool windowed = true;
 
+        private GameState state;
+
         private ParticleSystemManager particleManager;
         private GraphicsDeviceManager graphics;
         private SpriteBatch spriteBatch;
         private Menu mainMenu;
 
         private List<MetaLevel> metas;
+
+        private Level previousLevel;
+        private Level currentLevel;
+        private View  currentView;
 
         public  MetaLevelsUpdated MetaLevelInfoUpdated { get { return metaLevelUpdatedDelegate; } set { metaLevelUpdatedDelegate = value; } }
         private MetaLevelsUpdated metaLevelUpdatedDelegate;
@@ -46,7 +62,7 @@ namespace Sands
             
             particleManager = new ParticleSystemManager();
             mainMenu = new Menu(this);
-            metas = MetaLevelFactory.CreateDefaultMetaLevelList();
+            metas = LevelFactory.CreateDefaultMetaLevelList();
             InitializeLevelLockStatus();
 
             /* Fullscreen Options */
@@ -59,6 +75,36 @@ namespace Sands
                 graphics.IsFullScreen = true;
             }
 
+            currentView = mainMenu;
+        }
+
+        internal void UnlockLevel(MetaLevel level)
+        {
+            RegistryKey hkcu = Registry.CurrentUser;
+            RegistryKey software = hkcu.CreateSubKey("Software");
+            RegistryKey adundas = software.CreateSubKey("Adundas");
+            RegistryKey pieces = adundas.CreateSubKey("Ice");
+            RegistryKey levels = pieces.CreateSubKey("levels");
+
+            bool found = false;
+            foreach (MetaLevel l in metas) {
+                if (found) {
+                    if (l.State == LevelState.LOCKED) {
+                        l.State = LevelState.UNKNOWN;
+                        levels.SetValue(l.Id, 1, RegistryValueKind.DWord); /* 0 - KNOWN, 1 - UNKNOWN, 2 - LOCKED */
+                    }
+                    break;
+                }
+                if (l.Equals(level)) {
+                    l.State = LevelState.KNOWN;
+                    levels.SetValue(l.Id, 0, RegistryValueKind.DWord);
+                    found = true;
+                }
+            }
+
+            if (metaLevelUpdatedDelegate != null) {
+                metaLevelUpdatedDelegate();
+            }
         }
 
         public void InitializeLevelLockStatus() {
@@ -175,7 +221,7 @@ namespace Sands
 
             base.Update(gameTime);
 
-            mainMenu.Update(gameTime);
+            currentView.Update(gameTime);
         }
 
         /// <summary>
@@ -185,9 +231,52 @@ namespace Sands
         protected override void Draw(GameTime gameTime)
         {
             GraphicsDevice.Clear(Color.Black);
-            mainMenu.Draw(gameTime);
+
+            currentView.Draw(gameTime);
 
             base.Draw(gameTime);
+        }
+
+        internal void SwitchToLevel(MetaLevel meta)
+        {
+            Level level = LevelFactory.CreateLevelFromMetaLevel(meta, this);
+            if (level == null) {
+                return;
+            }
+
+            if (state == GameState.MENU) {
+                /* Transition from the menu to the level. Don't dispose MENU. */
+                currentLevel = level;
+                currentLevel.Load();
+
+                mainMenu.Sound = false;
+                state = GameState.LEVEL;
+            } else if (state == GameState.LEVEL) {
+                /* Transition from the prior level to the new level. Dispose resources immediately. */
+                if (currentLevel != null) {
+                    currentLevel.Unload();
+                }
+                currentLevel = level;
+                currentLevel.Load();
+            }
+            currentView = currentLevel;
+        }
+
+        public void SwitchToMenu()
+        {
+            if (state == GameState.MENU) {
+                /* No-op */
+            } else if (state == GameState.LEVEL) {
+                /* Transition from the prior level to the new level. Dispose resources immediately. */
+                if (currentLevel != null) {
+                    currentLevel.Unload();
+                }
+                currentLevel = null;
+                state = GameState.MENU;
+            }
+
+            mainMenu.Sound = true;
+            currentView = mainMenu;
         }
     }
 }
