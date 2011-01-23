@@ -1,0 +1,22 @@
+SONG OF ICE - v0.1
+
+Song of Ice is a passive game, meant to provide a relaxing but interactive musical experience. The levels require very little skill to complete, but should provide the user some musical and visual entertainment value.
+
+LICENSE
+-------------
+Not yet determined.
+
+Content license - Some of the content included in Song of Ice cannot be included in other works.
+
+PREREQUISITES
+-------------
+In order to build Song of Ice, you must have the Microsoft XNA Game Studio Version 3.1, and some version of Microsoft Visual C# (The Express Edition is free and does the job).
+
+BUILDING
+-------------
+Open: Ice/Ice.sln in Visual C#.
+Build the project.
+
+PLAYING
+--------------
+The game rules are not yet determined. Further instructions on how to play will be added here when the game rules are finalized.
