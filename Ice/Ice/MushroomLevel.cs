@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 
@@ -32,7 +33,13 @@ namespace Ice
         private bool levelStarted;
         private TimeSpan levelStart;
 
+        private VisualizationData visData;
+
+        private KeyboardState previousKeyboardState;
         private MouseState previousMouseState;
+
+        private float hundredFrameMovingPowerAvg;
+        private int frameCount;
 
         public MushroomLevel(SongOfIce game, MetaLevel meta) : base(game, meta) {
             setup = false;
@@ -41,30 +48,7 @@ namespace Ice
         public override void Update(GameTime gameTime)
         {
             base.Update(gameTime);
-
             hitmap = particleSystem.Hitmap;
-
-            KeyboardState keyboard = Keyboard.GetState();
-            MouseState mouse = Mouse.GetState();
-
-            if (keyboard.IsKeyDown(Keys.Escape)) {
-                game.UnlockLevel(metaLevel);
-                game.SwitchToMenu();
-            }
-
-            /* Emitter PPS calcuation */
-            particleSystem.Emitter.ParticlesPerSecond = (float)TotalLevelTime(gameTime).TotalSeconds * (float)TotalLevelTime(gameTime).TotalSeconds;
-
-            Vector3 screenPosition = game.GraphicsDevice.Viewport.Project(particleSystem.Emitter.PositionData.Position, projectionMatrix, viewMatrix, Matrix.Identity);
-
-            if (screenPosition.X < 0)  {
-                screenPosition.X = 0;
-                particleSystem.Emitter.PositionData.Position = game.GraphicsDevice.Viewport.Unproject(screenPosition, projectionMatrix, viewMatrix, Matrix.Identity);
-            } else if (screenPosition.X > game.GraphicsDevice.Viewport.Width) {
-                screenPosition.X = game.GraphicsDevice.Viewport.Width;
-                particleSystem.Emitter.PositionData.Position = game.GraphicsDevice.Viewport.Unproject(screenPosition, projectionMatrix, viewMatrix, Matrix.Identity);
-            }
-
 
             /* Emitter drag */
             particleSystem.Emitter.PositionData.Velocity *= .98f;
@@ -72,19 +56,107 @@ namespace Ice
                 particleSystem.Emitter.PositionData.Velocity = Vector3.Zero;
             }
 
-            /* Keyboard Handling */
-            if (keyboard.IsKeyDown(Keys.Left)) {
-                particleSystem.Emitter.PositionData.Velocity.X -= 0.6f;
-            }
-            if (keyboard.IsKeyDown(Keys.Right)) {
-                
-                particleSystem.Emitter.PositionData.Velocity.X += 0.6f;
+            /* Input */
+            handleKeyboard();
+            handleMouse();
+
+
+            /* Emitter particles based on music / time / other state */
+            setEmitterParticles(gameTime);
+
+            clampParticleSystemEmitter();
+            
+            particleSystem.Update((float)gameTime.ElapsedGameTime.TotalSeconds);
+        }
+
+        private void setEmitterParticles(GameTime gameTime)
+        {
+            MediaPlayer.GetVisualizationData(visData);
+
+            /* Emitter PPS calcuation */
+
+            /* Power modulation */
+            /* The power is summed for all frequency bands, and there is a 200 frame moving average that's kept. */
+            /* If the power is < 80% of the current 200 frame moving average, the power is treated as 0. If the power
+             * is non-zero, a logistic growth function is applied. */
+            float power = 0;
+            float particlesPerSecond = 0;
+            foreach (float f in visData.Frequencies) {
+                power += f;
             }
 
+            frameCount++;
+            if (frameCount > 200) {
+                hundredFrameMovingPowerAvg -= hundredFrameMovingPowerAvg / 200f;
+            }
+
+            hundredFrameMovingPowerAvg += power / 200f;
+
+            float modPower = power - (hundredFrameMovingPowerAvg * .8f);
+            if (modPower < 0) {
+                modPower = 0;
+            }
+
+            modPower *= .5f;
+            modPower = (float)(1 + Math.Pow(Math.E, (-(modPower-15))));
+
+            if (modPower <= 0) {
+                particlesPerSecond = 1;
+            } else {
+                particlesPerSecond = 100 / modPower;
+            }
+
+            /* Time modulation */
+            float secondsElapsed = (float)TotalLevelTime(gameTime).TotalSeconds;
+            particlesPerSecond *= secondsElapsed * .25f;
+            
+            
+            particleSystem.Emitter.ParticlesPerSecond = particlesPerSecond;
+        }
+
+        private void handleMouse()
+        {
+            MouseState mouse = Mouse.GetState();
             /* Mouse handling */
             if (previousMouseState != null && mouse.X != previousMouseState.X) {
                 float delta = mouse.X - previousMouseState.X;
                 particleSystem.Emitter.OrientationData.Rotate(Matrix.CreateRotationZ(delta * .005f));
+            }
+
+            previousMouseState = mouse;
+        }
+
+        private void handleKeyboard()
+        {
+            KeyboardState keyboard = Keyboard.GetState();
+            /* Keyboard Handling */
+            if (keyboard.IsKeyDown(Keys.Escape)) {
+                game.UnlockLevel(metaLevel);
+                game.SwitchToMenu();
+            }
+
+            if (keyboard.IsKeyDown(Keys.Left)) {
+                particleSystem.Emitter.PositionData.Velocity.X -= 0.6f;
+            }
+            if (keyboard.IsKeyDown(Keys.Right)) {
+
+                particleSystem.Emitter.PositionData.Velocity.X += 0.6f;
+            }
+
+            previousKeyboardState = keyboard;
+        }
+
+        private void clampParticleSystemEmitter()
+        {
+            Vector3 screenPosition = game.GraphicsDevice.Viewport.Project(particleSystem.Emitter.PositionData.Position, projectionMatrix, viewMatrix, Matrix.Identity);
+
+            /* Emitter position clamping */
+            if (screenPosition.X < 0) {
+                screenPosition.X = 0;
+                particleSystem.Emitter.PositionData.Position = game.GraphicsDevice.Viewport.Unproject(screenPosition, projectionMatrix, viewMatrix, Matrix.Identity);
+            } else if (screenPosition.X > game.GraphicsDevice.Viewport.Width) {
+                screenPosition.X = game.GraphicsDevice.Viewport.Width;
+                particleSystem.Emitter.PositionData.Position = game.GraphicsDevice.Viewport.Unproject(screenPosition, projectionMatrix, viewMatrix, Matrix.Identity);
             }
 
             /* Emitter speed clamping */
@@ -104,10 +176,6 @@ namespace Ice
                     particleSystem.Emitter.OrientationData.Right = new Vector3(1f, -1f, 0f);
                 }
             }
-
-            particleSystem.Update((float)gameTime.ElapsedGameTime.TotalSeconds);
-
-            previousMouseState = mouse;
         }
 
         private TimeSpan TotalLevelTime(GameTime gameTime)
@@ -157,7 +225,8 @@ namespace Ice
         }
 
         public override void Load()
-        {            
+        {
+            visData = new VisualizationData();
             mushroom = content.Load<Texture2D>("1upheart");
             hitmap = content.Load<Texture2D>("hitmap");
             shader = content.Load<Effect>("effects");
@@ -184,7 +253,9 @@ namespace Ice
         {
             base.SoundStarted();
 
+            MediaPlayer.IsVisualizationEnabled = true;
             MediaPlayer.Play(music);
+            
         }
 
         protected override void SoundStopped()

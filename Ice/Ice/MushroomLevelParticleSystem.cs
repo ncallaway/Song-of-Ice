@@ -247,10 +247,15 @@ namespace DPSF.ParticleSystems
                     cParticle.Velocity.X = -Math.Abs(cParticle.Velocity.X);
                 }
             }
+
             if (screenPosition.Y < 0 || screenPosition.Y > port.Height) {
                 if (screenPosition.Y > port.Height) {
                     cParticle.NormalizedElapsedTime = 1.0f;
                 }
+            }
+
+            if (cParticle.Velocity.Y > -9f) {
+                cParticle.Velocity.Y -= .02f;
             }
 
             Vector2 position = new Vector2(screenPosition.X * (1600f / (float)port.Width), screenPosition.Y * (1200f / (float)port.Height));
@@ -260,13 +265,17 @@ namespace DPSF.ParticleSystems
 
                 cParticle.NormalizedElapsedTime = 1.0f; /* kill the particle */
 
+                if (position.Y < 150) {
+                    return;
+                }
+
                 for (int x = (int)position.X - blockSize; x < (int)position.X + blockSize; x++) {
                     for (int y = (int)position.Y - blockSize; y < (int)position.Y + blockSize; y++) {
                         writePosition(x, y, true);
                     }
 
                     int lastFill = (int)position.Y - blockSize;
-                    for (int y = (int)position.Y + blockSize; y < 1200 && y - ((int)position.Y +blockSize) < 25; y++) {
+                    for (int y = (int)position.Y + blockSize; y < 1200 && y - ((int)position.Y +blockSize) < 45; y++) {
                         if (readPosition(x, y)) {
                             /* must be partically continuous fill! */
                             for (int j = y; j > lastFill; j--) {
