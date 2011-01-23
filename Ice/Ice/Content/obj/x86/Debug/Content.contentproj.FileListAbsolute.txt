@@ -1,3 +1,0 @@
-C:\particle\dev\Sands\WindowsGame1\Content\obj\x86\Debug\ResolveAssemblyReference.cache
-C:\particle\dev\Ice\WindowsGame1\Content\obj\x86\Debug\ResolveAssemblyReference.cache
-C:\particle\dev\Ice\Ice\Content\obj\x86\Debug\ResolveAssemblyReference.cache

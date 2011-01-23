@@ -1,6 +1,6 @@
 using System;
 
-namespace Sands
+namespace Ice
 {
     static class Program
     {

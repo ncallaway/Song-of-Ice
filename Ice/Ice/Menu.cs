@@ -10,7 +10,7 @@ using Microsoft.Xna.Framework.Graphics;
 using DPSF;
 using DPSF.ParticleSystems;
 
-namespace Sands
+namespace Ice
 {
     class Menu : View
     {

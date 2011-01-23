@@ -9,7 +9,7 @@ using Microsoft.Xna.Framework.Media;
 using Microsoft.Xna.Framework.Graphics;
 
 
-namespace Sands
+namespace Ice
 {
     abstract class MenuHelper
     {

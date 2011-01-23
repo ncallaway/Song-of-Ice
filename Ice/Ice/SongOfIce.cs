@@ -16,7 +16,7 @@ using Microsoft.Xna.Framework.Storage;
 
 using DPSF;
 
-namespace Sands
+namespace Ice
 {
     public delegate void MetaLevelsUpdated();
 
@@ -259,6 +259,7 @@ namespace Sands
                 currentLevel.Load();
             }
             currentView = currentLevel;
+            currentView.Sound = true;
         }
 
         public void SwitchToMenu()

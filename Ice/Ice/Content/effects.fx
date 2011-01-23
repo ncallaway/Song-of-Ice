@@ -31,7 +31,13 @@ bool xShowNormals;
 //------- Texture Samplers --------
 
 Texture xTexture;
+
+Texture xHitmap;
+float   xHitmapWidth;
+float   xHitmapHeight;
+
 sampler TextureSampler = sampler_state { texture = <xTexture>; magfilter = LINEAR; minfilter = LINEAR; mipfilter=LINEAR; AddressU = mirror; AddressV = mirror;};
+sampler HitmapSampler = sampler_state { texture = <xHitmap>; magfilter = LINEAR; minfilter = LINEAR; mipfilter=LINEAR; AddressU = clamp; AddressV = clamp;};
 
 //------- Technique: Pretransformed --------
 
@@ -119,9 +125,72 @@ technique Colored
 	}
 }
 
+// Technique: VerticalEdge
+
+VertexToPixel VerticalEdgeVS( float4 inPos : POSITION, float3 inNormal: NORMAL, float2 inTexCoords: TEXCOORD0)
+{
+	VertexToPixel Output = (VertexToPixel)0;
+	
+	Output.Position = inPos;
+	Output.TextureCoords = inTexCoords;
+	Output.LightingFactor = 1;
+	
+	return Output;
+	
+	/*VertexToPixel Output = (VertexToPixel)0;
+	float4x4 preViewProjection = mul (xView, xProjection);
+	float4x4 preWorldViewProjection = mul (xWorld, preViewProjection);
+    
+	//Output.Position = mul(inPos, preWorldViewProjection);	
+	Output.Position = inPos;
+	Output.TextureCoords = inTexCoords;
+	
+	float3 Normal = normalize(mul(normalize(inNormal), xWorld));	
+	Output.LightingFactor = 1;
+	if (xEnableLighting)
+		Output.LightingFactor = saturate(dot(Normal, -xLightDirection));
+    
+	return Output;*/
+}
+
+PixelToFrame VerticalEdgePS(VertexToPixel PSIn) 
+{
+	PixelToFrame Output = (PixelToFrame)0;
+
+	float2 uv = PSIn.TextureCoords;
+	
+	Output.Color = tex2D(TextureSampler, uv);
+	Output.Color.rgb *= saturate(PSIn.LightingFactor + xAmbient);
+	
+	Output.Color.rgb = float3(0, 0, 0);
+	
+	float4 hit = tex2D(HitmapSampler, PSIn.TextureCoords);
+	if (hit.r >= 0.5) {
+		Output.Color = tex2D(TextureSampler, PSIn.TextureCoords);
+		float pixDeltaY = 1.0 / xHitmapHeight;
+		float2 uv = PSIn.TextureCoords;
+		uv.y -= pixDeltaY * 2;
+		
+		hit = tex2D(HitmapSampler, uv);
+		
+		if (hit.r <= 0.5) {
+			Output.Color.rgb = float3(0.0, 1.0, 0.0);
+		} 
+	}
+	
+	return Output;
+}
+
+technique VerticalEdge_2_0
+{
+	pass Pass0
+	{   
+		VertexShader = compile vs_2_0 VerticalEdgeVS();
+		PixelShader  = compile ps_2_0 VerticalEdgePS();
+	}
+}
 
 //------- Technique: Textured --------
-
 VertexToPixel TexturedVS( float4 inPos : POSITION, float3 inNormal: NORMAL, float2 inTexCoords: TEXCOORD0)
 {	
 	VertexToPixel Output = (VertexToPixel)0;
@@ -130,7 +199,6 @@ VertexToPixel TexturedVS( float4 inPos : POSITION, float3 inNormal: NORMAL, floa
     
 	//Output.Position = mul(inPos, preWorldViewProjection);	
 	Output.Position = inPos;
-	Output.Position.z = 1;
 	Output.TextureCoords = inTexCoords;
 	
 	float3 Normal = normalize(mul(normalize(inNormal), xWorld));	
@@ -141,11 +209,14 @@ VertexToPixel TexturedVS( float4 inPos : POSITION, float3 inNormal: NORMAL, floa
 	return Output;    
 }
 
+
 PixelToFrame TexturedPS(VertexToPixel PSIn) 
 {
-	PixelToFrame Output = (PixelToFrame)0;		
+	PixelToFrame Output = (PixelToFrame)0;
+
+	float2 uv = PSIn.TextureCoords;
 	
-	Output.Color = tex2D(TextureSampler, PSIn.TextureCoords);
+	Output.Color = tex2D(TextureSampler, uv);
 	Output.Color.rgb *= saturate(PSIn.LightingFactor + xAmbient);
 
 	return Output;
