@@ -56,17 +56,16 @@ namespace Ice
                 particleSystem.Emitter.PositionData.Velocity = Vector3.Zero;
             }
 
-            /* Input */
-            handleKeyboard();
-            handleMouse();
-
 
             /* Emitter particles based on music / time / other state */
             setEmitterParticles(gameTime);
 
             clampParticleSystemEmitter();
-            
             particleSystem.Update((float)gameTime.ElapsedGameTime.TotalSeconds);
+
+            /* Input */
+            handleKeyboard();
+            handleMouse();
         }
 
         private void setEmitterParticles(GameTime gameTime)
@@ -109,8 +108,8 @@ namespace Ice
             /* Time modulation */
             float secondsElapsed = (float)TotalLevelTime(gameTime).TotalSeconds;
             particlesPerSecond *= secondsElapsed * .25f;
-            
-            
+
+
             particleSystem.Emitter.ParticlesPerSecond = particlesPerSecond;
         }
 
@@ -131,6 +130,7 @@ namespace Ice
             KeyboardState keyboard = Keyboard.GetState();
             /* Keyboard Handling */
             if (keyboard.IsKeyDown(Keys.Escape)) {
+                mushroom.Save("level1.png", ImageFileFormat.Png);
                 game.UnlockLevel(metaLevel);
                 game.SwitchToMenu();
             }

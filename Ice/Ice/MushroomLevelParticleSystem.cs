@@ -64,6 +64,7 @@ namespace DPSF.ParticleSystems
         private int stop;
 
         private int blockSize;
+        private int normalBlockSize;
 
         //===========================================================
         // Overridden Particle System Functions
@@ -128,13 +129,14 @@ namespace DPSF.ParticleSystems
             // as the Particle Initialization Function.
 
             blockSize = 3;
+            normalBlockSize = 10;
 
-            InitialProperties.LifetimeMin = 10f;
-            InitialProperties.LifetimeMax = 10f;
-            InitialProperties.PositionMin = new Vector3(-1f, -1f, 0f);
-            InitialProperties.PositionMax = new Vector3(1f, 1f, 0f);
-            InitialProperties.VelocityMin = new Vector3(-.5f, -3f, 0);
-            InitialProperties.VelocityMax = new Vector3(.5f, -6f, 0);
+            InitialProperties.LifetimeMin = 20f;
+            InitialProperties.LifetimeMax = 20f;
+            InitialProperties.PositionMin = new Vector3(-.5f, -.5f, 0f);
+            InitialProperties.PositionMax = new Vector3(.5f, .5f, 0f);
+            InitialProperties.VelocityMin = new Vector3(-2f, -3f, 0);
+            InitialProperties.VelocityMax = new Vector3(2f, -6f, 0);
             InitialProperties.RotationMin = 0.0f;
             InitialProperties.RotationMax = MathHelper.Pi;
             InitialProperties.RotationalVelocityMin = -MathHelper.Pi;
@@ -192,7 +194,7 @@ namespace DPSF.ParticleSystems
             //-----------------------------------------------------------
 
             // Set the Particle's Lifetime (how long it should exist for)
-            cParticle.Lifetime = 10f;
+            cParticle.Lifetime = 20f;
 
             // Set the Particle's initial Position to be wherever the Emitter is
 
@@ -229,6 +231,10 @@ namespace DPSF.ParticleSystems
         // same function prototype as below (i.e. public void FunctionName(DPSFParticle, float))
         //-----------------------------------------------------------
 
+        public void UpdateParticlePhysics(DefaultPointSpriteParticle cParticle, float fElapsedTimeInSeconds)
+        {
+        }
+
         public void UpdateParticleHitmapCollision(DefaultPointSpriteParticle cParticle, float fElapsedTimeInSeconds)
         {
             
@@ -254,6 +260,7 @@ namespace DPSF.ParticleSystems
                 }
             }
 
+            /* gravity! */
             if (cParticle.Velocity.Y > -9f) {
                 cParticle.Velocity.Y -= .02f;
             }
@@ -263,11 +270,34 @@ namespace DPSF.ParticleSystems
             if (readPosition(position)) {
                 /* HIT! */
 
-                cParticle.NormalizedElapsedTime = 1.0f; /* kill the particle */
-
                 if (position.Y < 150) {
+                    cParticle.NormalizedElapsedTime = 1.0f; /* kill the particle */
                     return;
                 }
+
+                
+                Vector2 surfacePosition = findSurfacePosition(position, cParticle.Velocity);
+                if (position != surfacePosition && cParticle.Velocity.Length() > 2f) {
+                    /* move the particle to the surface */
+                    position = surfacePosition; //2 * surfacePosition - position;
+                    moveToPosition(cParticle, position);
+                }
+
+                
+                /* Bounce! */
+                if (cParticle.Velocity.Length() > 2f) {
+                    Vector3 normal = computeNormal(position);
+                    Vector3 inVelocity = cParticle.Velocity;
+                    inVelocity.Normalize();
+                    Vector3 velocity = Vector3.Reflect(inVelocity, normal);
+                    velocity *= cParticle.Velocity.Length() * 0.2f;
+
+                    cParticle.Velocity = velocity;
+                    return;
+                }
+
+               
+                cParticle.NormalizedElapsedTime = 1.0f; /* kill the particle */ 
 
                 for (int x = (int)position.X - blockSize; x < (int)position.X + blockSize; x++) {
                     for (int y = (int)position.Y - blockSize; y < (int)position.Y + blockSize; y++) {
@@ -277,7 +307,7 @@ namespace DPSF.ParticleSystems
                     int lastFill = (int)position.Y - blockSize;
                     for (int y = (int)position.Y + blockSize; y < 1200 && y - ((int)position.Y +blockSize) < 45; y++) {
                         if (readPosition(x, y)) {
-                            /* must be partically continuous fill! */
+                            /* must be continuous fill! */
                             for (int j = y; j > lastFill; j--) {
                                 writePosition(x, j, true);
                             }
@@ -287,6 +317,156 @@ namespace DPSF.ParticleSystems
                 }
                 
             }
+        }
+
+        private void moveToPosition(DefaultPointSpriteParticle cParticle, Vector2 position)
+        {
+            Vector2 screenPosition = new Vector2(position.X * ((float)port.Width / 1600f), position.Y * ((float)port.Height / 1200f));
+
+            Vector3 currentScreenPosition = port.Project(cParticle.Position, custprojection, custview, Matrix.Identity);
+            currentScreenPosition.X = screenPosition.X;
+            currentScreenPosition.Y = screenPosition.Y;
+            cParticle.Position = port.Unproject(currentScreenPosition, custprojection, custview, Matrix.Identity);
+        }
+
+        private Vector2 findSurfacePosition(Vector2 startPosition, Vector3 velocity)
+        {
+            float x = startPosition.X;
+            float y = startPosition.Y;
+
+            velocity.Normalize();
+
+            while (x >= 0 && x < 1600 && y >= 150 && y < 1200 && readPosition((int)x, (int)y)) {
+                x -= velocity.X;
+                y += velocity.Y;
+            }
+
+            x += velocity.X;
+            y -= velocity.Y;
+
+            if (readPosition((int)x, (int)y)) {
+                return new Vector2((int)x, (int)y);
+            }
+            return startPosition;
+        }
+
+        private Vector3 computeNormal(Vector2 position)
+        {
+            /*
+            Vector3 normal = Vector3.UnitY;
+            int x = (int)position.X;
+            int y = (int)position.Y;
+
+            for (int i = x - 1; i <= x + 1; i++) {
+                for (int j = y - 1; j <= y + 1; j++) {
+                    if (readPosition(i, j)) {
+                        normal += new Vector3(x - i, y - j, 0);
+                    }
+                }
+            }
+
+            /* cheat, and only take positive normals
+            if (normal.Y < 0) {
+                normal = -normal;
+            }
+            normal.Normalize();
+            return normal;*/
+
+            Vector3 normal;
+
+            int x = (int)position.X;
+            int y = (int)position.Y;
+
+            float n = (normalBlockSize * 2) + 1;
+            float sumX = n * x;
+            float sumXsquared = 0;
+            float sumY = 0;
+            float sumXY = 0;
+
+            int height = y;
+            /* Go left */
+            for (int i = 0; i < normalBlockSize; i++) {
+                height = surfaceHeight(x - i, height);
+                sumXsquared += (x - i) * (x - 1);
+                sumY += height;
+                sumXY += (x - i) * height;
+            }
+
+            /* center */
+            sumXsquared += x * x;
+            sumY += y;
+            sumXY += x * y;
+
+            /* Go right */
+            height = y;
+            for (int i = 0; i < normalBlockSize; i++) {
+                height = surfaceHeight(x + i, height);
+                sumXsquared += (x + i) * (x + 1);
+                sumY += height;
+                sumXY += (x + i) * height;
+            }
+
+            float slopeDenominator = (sumX * sumX - n * sumXsquared);
+            float slopeNumerator = ((sumX * sumY - n * sumXY));
+
+            if (slopeDenominator == 0) {
+                /* Vertical line */
+                return Vector3.UnitX;
+            }
+
+            if (slopeNumerator == 0) {
+                /* Horizontal line */
+                return Vector3.UnitY;
+            }
+
+            float slope = slopeNumerator / slopeDenominator;
+
+            Vector2 hill = new Vector2(1, slope);
+            normal = new Vector3(1, slope, 0);
+
+            /* unneccessary safety check! */
+            if (normal.Y < 0) {
+                normal = -normal;
+            }
+
+            normal.Normalize();
+            return normal;
+        }
+
+        private int surfaceHeight(float x, float startY)
+        {
+            int intX = (int)x;
+            int intY = (int)startY;
+            if (intY < 150) {
+                return 150;
+            }
+
+            if (intY >= 1200) {
+                intY = 1200 - 1;
+            }
+
+            if (intX < 0 || intX >= 1600) {
+                return intY;
+            }
+
+            bool up = readPosition(intX, intY);
+
+            intY--;
+
+            while (up && intY > 150 && readPosition(intX, intY)) {
+                intY--;
+            }
+
+            while (!up && intY < 1200 && !readPosition(intX, intY)) {
+                intY++;
+            }
+
+            if (up) {
+                /* Up alg overscans by one! */
+                intY++;
+            }
+
+            return intY;
         }
 
         private bool readPosition(Vector2 position)
@@ -325,51 +505,13 @@ namespace DPSF.ParticleSystems
             pixels[index].B = pixValue;
         }
 
-        /// <summary>
-        /// Example of how to create a Particle Event Function
-        /// </summary>
-        /// <param name="cParticle">The Particle to update</param>
-        /// <param name="fElapsedTimeInSeconds">How long it has been since the last update</param>
-        protected void UpdateParticleFunctionExample(DefaultPointSpriteParticle cParticle, float fElapsedTimeInSeconds)
-        {
-            // Place code to update the Particle here
-            // Example: cParticle.Position += cParticle.Velocity * fElapsedTimeInSeconds;
-            cParticle.NormalizedElapsedTime = 1.0f;
-        }
-
         protected void UpdateParticleForPosition(DefaultPointSpriteParticle cParticle, float fElapsedTimeInSeconds)
         {
-            // Place code to update the Particle here
             // Example: cParticle.Position += cParticle.Velocity * fElapsedTimeInSeconds;
-            cParticle.NormalizedElapsedTime = (cParticle.Position.Y - 20f) / -30f;
-
-            if (cParticle.Position.Y < -20f)
-            {
-                cParticle.NormalizedElapsedTime = 1.0f;
-            }
+            cParticle.NormalizedElapsedTime = 0.0f;
         }
         //===========================================================
         // Particle System Update Functions
-        //===========================================================
-
-        //-----------------------------------------------------------
-        // TODO: Place your Particle System Update functions here, using 
-        // the same function prototype as below (i.e. public void FunctionName(float))
-        //-----------------------------------------------------------
-
-        /// <summary>
-        /// Example of how to create a Particle System Event Function
-        /// </summary>
-        /// <param name="fElapsedTimeInSeconds">How long it has been since the last update</param>
-        protected void UpdateParticleSystemFunctionExample(float fElapsedTimeInSeconds)
-        {
-            // Place code to update the Particle System here
-            // Example: Emitter.EmitParticles = true;
-            // Example: SetTexture("TextureAssetName");
-        }
-
-        //===========================================================
-        // Other Particle System Functions
         //===========================================================
 
         public void UpdatePixelData(float fElapsedTimeInSeconds)
