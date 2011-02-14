@@ -30,9 +30,6 @@ namespace Ice
         private Texture2D hitmap;
         private Effect shader;
 
-        private bool levelStarted;
-        private TimeSpan levelStart;
-
         private VisualizationData visData;
 
         private KeyboardState previousKeyboardState;
@@ -48,24 +45,32 @@ namespace Ice
         public override void Update(GameTime gameTime)
         {
             base.Update(gameTime);
-            hitmap = particleSystem.Hitmap;
 
-            /* Emitter drag */
-            particleSystem.Emitter.PositionData.Velocity *= .98f;
-            if (particleSystem.Emitter.PositionData.Velocity.Length() < .1f) {
-                particleSystem.Emitter.PositionData.Velocity = Vector3.Zero;
+            if (!levelComplete && TotalLevelTime(gameTime).TotalSeconds < 324 ) {
+                hitmap = particleSystem.Hitmap;
+
+                /* Emitter drag */
+                particleSystem.Emitter.PositionData.Velocity *= .98f;
+                if (particleSystem.Emitter.PositionData.Velocity.Length() < .1f) {
+                    particleSystem.Emitter.PositionData.Velocity = Vector3.Zero;
+                }
+
+
+                /* Emitter particles based on music / time / other state */
+                setEmitterParticles(gameTime);
+
+                clampParticleSystemEmitter();
+                particleSystem.Update((float)gameTime.ElapsedGameTime.TotalSeconds);
+
+                /* Input */
+                handleKeyboard();
+                handleMouse();
+            } else {
+                MediaPlayer.Volume = 0;
+                completeLevel();
+                handleLevelCompleteMouse();
+                handleLevelCompleteKeyboard();
             }
-
-
-            /* Emitter particles based on music / time / other state */
-            setEmitterParticles(gameTime);
-
-            clampParticleSystemEmitter();
-            particleSystem.Update((float)gameTime.ElapsedGameTime.TotalSeconds);
-
-            /* Input */
-            handleKeyboard();
-            handleMouse();
         }
 
         private void setEmitterParticles(GameTime gameTime)
@@ -113,6 +118,17 @@ namespace Ice
             particleSystem.Emitter.ParticlesPerSecond = particlesPerSecond;
         }
 
+        private void handleLevelCompleteKeyboard()
+        {
+            KeyboardState keyboard = Keyboard.GetState();
+            /* Keyboard Handling */
+            if (keyboard.IsKeyDown(Keys.Escape)) {
+                game.SwitchToMenu();
+            }
+
+            previousKeyboardState = keyboard;
+        }
+
         private void handleMouse()
         {
             MouseState mouse = Mouse.GetState();
@@ -125,13 +141,33 @@ namespace Ice
             previousMouseState = mouse;
         }
 
+        private void handleLevelCompleteMouse()
+        {
+            /* Check for click */
+            MouseState mouse = Mouse.GetState();
+            
+            if (mouse.LeftButton == ButtonState.Released && previousMouseState.LeftButton == ButtonState.Pressed) {
+                SwitchToNextLevel();
+            }
+
+            previousMouseState = mouse;
+        }
+
+        private void completeLevel()
+        {
+            if (levelComplete) {
+                return;
+            }
+            mushroom.Save("1-up.png", ImageFileFormat.Png);
+            game.UnlockLevel(metaLevel);
+            levelComplete = true;
+        }
+
         private void handleKeyboard()
         {
             KeyboardState keyboard = Keyboard.GetState();
             /* Keyboard Handling */
             if (keyboard.IsKeyDown(Keys.Escape)) {
-                mushroom.Save("level1.png", ImageFileFormat.Png);
-                game.UnlockLevel(metaLevel);
                 game.SwitchToMenu();
             }
 
@@ -178,17 +214,6 @@ namespace Ice
             }
         }
 
-        private TimeSpan TotalLevelTime(GameTime gameTime)
-        {
-            if (levelStarted) {
-                return gameTime.TotalGameTime - levelStart;
-            }
-
-            levelStarted = true;
-            levelStart = gameTime.TotalGameTime;
-            return new TimeSpan();
-        }
-
         public override void Draw(GameTime gameTime)
         {
             if (!setup) {
@@ -205,6 +230,14 @@ namespace Ice
             shader.Parameters["xHitmap"].SetValue(hitmap);
             shader.Parameters["xHitmapWidth"].SetValue(hitmap.Width);
             shader.Parameters["xHitmapHeight"].SetValue(hitmap.Height);
+            if (!levelComplete) {
+                shader.Parameters["xAlpha"].SetValue(1f);
+            } else {
+                shader.Parameters["xAlpha"].SetValue(.8f);
+            }
+
+            game.GraphicsDevice.RenderState.AlphaBlendEnable = true;
+
             shader.Begin();
 
             foreach (EffectPass pass in shader.CurrentTechnique.Passes) {
@@ -218,7 +251,12 @@ namespace Ice
             shader.End();
 
             particleSystem.SetWorldViewProjectionMatrices(Matrix.Identity, viewMatrix, projectionMatrix);
-            particleSystem.Draw();
+
+            if (!levelComplete) {
+                particleSystem.Draw();
+            } else {
+                DrawLevelWinText();
+            }
 
             game.GraphicsDevice.Textures[0] = null;
             game.GraphicsDevice.Textures[1] = null;
@@ -226,6 +264,8 @@ namespace Ice
 
         public override void Load()
         {
+            base.Load();
+
             visData = new VisualizationData();
             mushroom = content.Load<Texture2D>("1upheart");
             hitmap = content.Load<Texture2D>("hitmap");
@@ -254,6 +294,7 @@ namespace Ice
             base.SoundStarted();
 
             MediaPlayer.IsVisualizationEnabled = true;
+            MediaPlayer.Volume = 0.2f;
             MediaPlayer.Play(music);
             
         }

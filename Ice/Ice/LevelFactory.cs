@@ -12,6 +12,14 @@ namespace Ice
                 return new MushroomLevel(game, metaLevel);
             }
 
+            if (metaLevel.Id == "tr") {
+                return new TronLevel(game, metaLevel);
+            }
+
+            if (metaLevel.Id == "cr") {
+                return new CreditsLevel(game, metaLevel);
+            }
+
             return null;
         }
 
@@ -19,16 +27,16 @@ namespace Ice
         {
             List<MetaLevel> levels = new List<MetaLevel>();
 
-            MetaLevel current = new MetaLevel("1-up", "oneup", "1upheart_thumb");
+            MetaLevel current = new MetaLevel("Tron", "tr", "trondaftpunk_thumb");
             levels.Add(current);
 
-            current = new MetaLevel("Star Wars", "sw", "questionmark");
+            current = new MetaLevel("1-up", "oneup", "1upheart_thumb");
             levels.Add(current);
 
-            current = new MetaLevel("First Breath", "fb", "questionmark");
-            levels.Add(current);
+            //current = new MetaLevel("Star Wars", "sw", "questionmark");
+            //levels.Add(current);
 
-            current = new MetaLevel("Credits", "cr", "questionmark");
+            current = new MetaLevel("Credits", "cr", "credits_thumb");
             levels.Add(current);
 
             return levels;

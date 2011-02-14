@@ -34,7 +34,7 @@ namespace Ice
     /// </summary>
     public class SongOfIce : Microsoft.Xna.Framework.Game
     {
-        public const bool windowed = true;
+        public const bool windowed = false;
 
         private GameState state;
 
@@ -260,6 +260,28 @@ namespace Ice
             }
             currentView = currentLevel;
             currentView.Sound = true;
+        }
+
+        internal MetaLevel GetNextLevel(MetaLevel current)
+        {
+            if (metas == null) {
+                return null;
+            }
+
+            int index = metas.IndexOf(current);
+
+            if (index < 0) {
+                return null;
+            }
+
+            index++;
+
+            if (index >= metas.Count()) {
+                return null;
+            }
+
+            MetaLevel next = metas[index];
+            return next;
         }
 
         public void SwitchToMenu()

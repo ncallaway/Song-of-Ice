@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?><?xml-stylesheet type='text/xsl' href='_UpgradeReport_Files/UpgradeReport.xslt'?><UpgradeLog>
+<Properties><Property Name="Solution" Value="Ice">
+</Property><Property Name="Solution File" Value="C:\particle\dev\Ice\Ice.sln">
+</Property><Property Name="User Options File" Value="C:\particle\dev\Ice\Ice.suo">
+</Property><Property Name="Date" Value="Tuesday, January 25, 2011">
+</Property><Property Name="Time" Value="6:54 AM">
+</Property><Property Name="Solution" Value="Ice">
+</Property><Property Name="Solution File" Value="C:\particle\dev\Ice\Ice.sln">
+</Property><Property Name="Date" Value="Tuesday, January 25, 2011">
+</Property><Property Name="Time" Value="6:54:43 AM">
+</Property></Properties><Event ErrorLevel="0" Project="" Source="Ice.sln" Description="File successfully backed up as C:\particle\devbak\Backup\Ice.sln">
+</Event><Event ErrorLevel="0" Project="" Source="Ice.suo" Description="File successfully backed up as C:\particle\devbak\Backup\Ice.suo">
+</Event><Event ErrorLevel="0" Project="Song of Ice" Source="Ice\Song of Ice.csproj" Description="Upgraded XNA Game Studio project to XNA Framework 4.0.">
+</Event><Event ErrorLevel="0" Project="Song of Ice" Source="Ice\Song of Ice.csproj" Description="Project file successfully backed up as C:\particle\devbak\Backup\Ice\Song of Ice.csproj">
+</Event><Event ErrorLevel="0" Project="Song of Ice" Source="Ice\Song of Ice.csproj.user" Description="Project user file successfully backed up as C:\particle\devbak\Backup\Ice\Song of Ice.csproj.user">
+</Event><Event ErrorLevel="0" Project="Song of Ice" Source="Ice\LoadingScreen.cs" Description="File successfully backed up as C:\particle\devbak\Backup\Ice\LoadingScreen.cs">
+</Event><Event ErrorLevel="0" Project="Song of Ice" Source="Ice\MushroomLevelParticleSystem.cs" Description="File successfully backed up as C:\particle\devbak\Backup\Ice\MushroomLevelParticleSystem.cs">
+</Event><Event ErrorLevel="0" Project="Song of Ice" Source="Ice\Level.cs" Description="File successfully backed up as C:\particle\devbak\Backup\Ice\Level.cs">
+</Event><Event ErrorLevel="0" Project="Song of Ice" Source="Ice\MenuSnowParticleSystem.cs" Description="File successfully backed up as C:\particle\devbak\Backup\Ice\MenuSnowParticleSystem.cs">
+</Event><Event ErrorLevel="0" Project="Song of Ice" Source="Ice\Menu.cs" Description="File successfully backed up as C:\particle\devbak\Backup\Ice\Menu.cs">
+</Event><Event ErrorLevel="0" Project="Song of Ice" Source="Ice\MenuHelper.cs" Description="File successfully backed up as C:\particle\devbak\Backup\Ice\MenuHelper.cs">
+</Event><Event ErrorLevel="0" Project="Song of Ice" Source="Ice\MetaLevel.cs" Description="File successfully backed up as C:\particle\devbak\Backup\Ice\MetaLevel.cs">
+</Event><Event ErrorLevel="0" Project="Song of Ice" Source="Ice\LevelFactory.cs" Description="File successfully backed up as C:\particle\devbak\Backup\Ice\LevelFactory.cs">
+</Event><Event ErrorLevel="0" Project="Song of Ice" Source="Ice\MushroomLevel.cs" Description="File successfully backed up as C:\particle\devbak\Backup\Ice\MushroomLevel.cs">
+</Event><Event ErrorLevel="0" Project="Song of Ice" Source="Ice\Properties\AssemblyInfo.cs" Description="File successfully backed up as C:\particle\devbak\Backup\Ice\Properties\AssemblyInfo.cs">
+</Event><Event ErrorLevel="0" Project="Song of Ice" Source="Ice\Program.cs" Description="File successfully backed up as C:\particle\devbak\Backup\Ice\Program.cs">
+</Event><Event ErrorLevel="0" Project="Song of Ice" Source="Ice\SongOfIce.cs" Description="File successfully backed up as C:\particle\devbak\Backup\Ice\SongOfIce.cs">
+</Event><Event ErrorLevel="0" Project="Song of Ice" Source="Ice\SnowHelper.cs" Description="File successfully backed up as C:\particle\devbak\Backup\Ice\SnowHelper.cs">
+</Event><Event ErrorLevel="0" Project="Song of Ice" Source="Ice\View.cs" Description="File successfully backed up as C:\particle\devbak\Backup\Ice\View.cs">
+</Event><Event ErrorLevel="0" Project="Song of Ice" Source="Ice\Song of Ice_TemporaryKey.pfx" Description="File successfully backed up as C:\particle\devbak\Backup\Ice\Song of Ice_TemporaryKey.pfx">
+</Event><Event ErrorLevel="0" Project="Song of Ice" Source="Ice\flake0.ico" Description="File successfully backed up as C:\particle\devbak\Backup\Ice\flake0.ico">
+</Event><Event ErrorLevel="0" Project="Song of Ice" Source="Ice\GameThumbnail.png" Description="File successfully backed up as C:\particle\devbak\Backup\Ice\GameThumbnail.png">
+</Event><Event ErrorLevel="0" Project="Song of Ice" Source="Ice\Song of Ice.csproj" Description="Project converted successfully">
+</Event><Event ErrorLevel="3" Project="Song of Ice" Source="Ice\Song of Ice.csproj" Description="Converted">
+</Event><Event ErrorLevel="0" Project="" Source="Ice.sln" Description="Solution converted successfully">
+</Event><Event ErrorLevel="3" Project="" Source="Ice.sln" Description="Converted">
+</Event><Event ErrorLevel="0" Project="Song of Ice" Source="Ice\Song of Ice.csproj" Description="Scan complete: Upgrade not required for project files.">
+</Event><Event ErrorLevel="0" Project="Song of Ice" Source="Ice\Song of Ice.csproj" Description="Upgraded XNA Framework references to XNA Framework 4.0.">
+</Event><Event ErrorLevel="0" Project="Content.contentproj" Source="1upheart.png" Description="Copied XNA Game Studio Content Project content to backup location.">
+</Event><Event ErrorLevel="0" Project="Content.contentproj" Source="1upheart_thumb.png" Description="Copied XNA Game Studio Content Project content to backup location.">
+</Event><Event ErrorLevel="0" Project="Content.contentproj" Source="AlbumArtSmall.jpg" Description="Copied XNA Game Studio Content Project content to backup location.">
+</Event><Event ErrorLevel="0" Project="Content.contentproj" Source="AlbumArt_{47398FD7-10EA-4681-93E0-D3F9AB921548}_Large.jpg" Description="Copied XNA Game Studio Content Project content to backup location.">
+</Event><Event ErrorLevel="0" Project="Content.contentproj" Source="AlbumArt_{47398FD7-10EA-4681-93E0-D3F9AB921548}_Small.jpg" Description="Copied XNA Game Studio Content Project content to backup location.">
+</Event><Event ErrorLevel="0" Project="Content.contentproj" Source="arrow.png" Description="Copied XNA Game Studio Content Project content to backup location.">
+</Event><Event ErrorLevel="0" Project="Content.contentproj" Source="Content.contentproj" Description="Copied XNA Game Studio Content Project content to backup location.">
+</Event><Event ErrorLevel="0" Project="Content.contentproj" Source="desktop.ini" Description="Copied XNA Game Studio Content Project content to backup location.">
+</Event><Event ErrorLevel="0" Project="Content.contentproj" Source="effects.fx" Description="Copied XNA Game Studio Content Project content to backup location.">
+</Event><Event ErrorLevel="0" Project="Content.contentproj" Source="First Breath After Coma.mp3" Description="Copied XNA Game Studio Content Project content to backup location.">
+</Event><Event ErrorLevel="0" Project="Content.contentproj" Source="flake0.ico" Description="Copied XNA Game Studio Content Project content to backup location.">
+</Event><Event ErrorLevel="0" Project="Content.contentproj" Source="flake0.png" Description="Copied XNA Game Studio Content Project content to backup location.">
+</Event><Event ErrorLevel="0" Project="Content.contentproj" Source="flakegreen.png" Description="Copied XNA Game Studio Content Project content to backup location.">
+</Event><Event ErrorLevel="0" Project="Content.contentproj" Source="Folder.jpg" Description="Copied XNA Game Studio Content Project content to backup location.">
+</Event><Event ErrorLevel="0" Project="Content.contentproj" Source="Font24.spritefont" Description="Copied XNA Game Studio Content Project content to backup location.">
+</Event><Event ErrorLevel="0" Project="Content.contentproj" Source="Font28.spritefont" Description="Copied XNA Game Studio Content Project content to backup location.">
+</Event><Event ErrorLevel="0" Project="Content.contentproj" Source="Font36.spritefont" Description="Copied XNA Game Studio Content Project content to backup location.">
+</Event><Event ErrorLevel="0" Project="Content.contentproj" Source="hitmap.png" Description="Copied XNA Game Studio Content Project content to backup location.">
+</Event><Event ErrorLevel="0" Project="Content.contentproj" Source="minibosses-supermariobros2.mp3" Description="Copied XNA Game Studio Content Project content to backup location.">
+</Event><Event ErrorLevel="0" Project="Content.contentproj" Source="padlock.png" Description="Copied XNA Game Studio Content Project content to backup location.">
+</Event><Event ErrorLevel="0" Project="Content.contentproj" Source="questionmark.png" Description="Copied XNA Game Studio Content Project content to backup location.">
+</Event><Event ErrorLevel="0" Project="Content.contentproj" Source="Snowscape_stub.jpg" Description="Copied XNA Game Studio Content Project content to backup location.">
+</Event><Event ErrorLevel="0" Project="Content.contentproj" Source="Star9.png" Description="Copied XNA Game Studio Content Project content to backup location.">
+</Event><Event ErrorLevel="0" Project="Content.contentproj" Source="white.png" Description="Copied XNA Game Studio Content Project content to backup location.">
+</Event><Event ErrorLevel="0" Project="IceContent" Source="Ice\Content\IceContent.contentproj" Description="Upgraded XNA Game Studio nested content projects to XNA Framework 4.0 and promoted to sibling project.">
+</Event></UpgradeLog>

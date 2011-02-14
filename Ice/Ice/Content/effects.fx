@@ -25,6 +25,7 @@ float4x4 xProjection;
 float4x4 xWorld;
 float3 xLightDirection;
 float xAmbient;
+float xAlpha;
 bool xEnableLighting;
 bool xShowNormals;
 
@@ -177,6 +178,8 @@ PixelToFrame VerticalEdgePS(VertexToPixel PSIn)
 			Output.Color.rgb = float3(0.0, 1.0, 0.0);
 		} 
 	}
+	
+	Output.Color.a = xAlpha;
 	
 	return Output;
 }

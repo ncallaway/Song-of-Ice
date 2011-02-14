@@ -29,7 +29,7 @@
     <UpdatePeriodically>false</UpdatePeriodically>
     <UpdateRequired>false</UpdateRequired>
     <MapFileExtensions>true</MapFileExtensions>
-    <ApplicationRevision>3</ApplicationRevision>
+    <ApplicationRevision>4</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
@@ -86,6 +86,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="TronLevelParticleSystem.cs" />
+    <Compile Include="TronLevel.cs" />
+    <Compile Include="CreditsLevel.cs" />
     <Compile Include="MushroomLevelParticleSystem.cs" />
     <Compile Include="Level.cs" />
     <Compile Include="MenuSnowParticleSystem.cs" />
